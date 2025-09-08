@@ -1,0 +1,72 @@
+<DATAFILE>
+
+[FILEINFO]
+file='../jointDataSim-BMImenache.csv'
+delimiter = comma
+header = {id, y, age, ageS, ytype, ancestria}
+
+[CONTENT]
+id = {use=identifier}
+y = {use=observation, name={y1, y2}, yname={'1', '2'}, type={continuous, discrete}}
+age = {use=time}
+ytype = {use=observationtype}
+ancestria = {use=regressor}
+
+<MODEL>
+
+[INDIVIDUAL]
+input = {a_pop, b_pop, c_pop, d_pop, e_pop, f_pop, g_pop, h_pop, omega_a, omega_b, omega_c, corr_b_a, corr_c_a, corr_c_b}
+
+DEFINITION:
+a = {distribution=normal, typical=a_pop, sd=omega_a}
+b = {distribution=normal, typical=b_pop, sd=omega_b}
+c = {distribution=normal, typical=c_pop, sd=omega_c}
+d = {distribution=normal, typical=d_pop, no-variability}
+e = {distribution=normal, typical=e_pop, no-variability}
+f = {distribution=normal, typical=f_pop, no-variability}
+g = {distribution=normal, typical=g_pop, no-variability}
+h = {distribution=normal, typical=h_pop, no-variability}
+correlation = {level=id, r(b, a)=corr_b_a, r(c, a)=corr_c_a, r(c, b)=corr_c_b}
+
+[LONGITUDINAL]
+input = {a_}
+
+file = 'model-simulation.txt'
+
+DEFINITION:
+y1 = {distribution=normal, prediction=m, errorModel=constant(a_)}
+
+<FIT>
+data = {y2, y1}
+model = {Level, y1}
+
+<PARAMETER>
+a_ = {value=1, method=MLE}
+a_pop = {value=18, method=MLE}
+b_pop = {value=-1, method=MLE}
+c_pop = {value=0.1, method=MLE}
+corr_b_a = {value=0, method=MLE}
+corr_c_a = {value=0, method=MLE}
+corr_c_b = {value=0, method=MLE}
+d_pop = {value=-3, method=MLE}
+e_pop = {value=0, method=MLE}
+f_pop = {value=3, method=MLE}
+g_pop = {value=1, method=MLE}
+h_pop = {value=14, method=MLE}
+omega_a = {value=1, method=MLE}
+omega_b = {value=1, method=MLE}
+omega_c = {value=1, method=MLE}
+
+<MONOLIX>
+
+[TASKS]
+populationParameters()
+individualParameters(method = {conditionalMean, conditionalMode })
+fim(method = StochasticApproximation)
+logLikelihood(method = ImportanceSampling)
+plotResult(method = {indfits, parameterdistribution, covariancemodeldiagnosis, covariatemodeldiagnosis, obspred, vpc, residualsscatter, residualsdistribution, randomeffects, saemresults })
+
+[SETTINGS]
+GLOBAL:
+exportpath = 'jointProject-simul'
+

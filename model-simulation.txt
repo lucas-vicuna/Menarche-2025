@@ -1,0 +1,24 @@
+
+[LONGITUDINAL]
+input = {a, b, c, d, f, e, g, h, ancestria}
+ancestria   = {use=regressor}
+
+EQUATION:
+
+; BMI
+m = a + b*t + c*t^2
+
+
+
+; MENARCHE
+lgp1 = d + f*ancestria + e*a + g*b + h*c
+lgp2 = 1-lgp1
+
+
+DEFINITION:
+Level = {type = categorical, categories={0,1}
+            logit(P(Level=1)) = lgp1
+}
+
+OUTPUT:
+output = {m, Level}
